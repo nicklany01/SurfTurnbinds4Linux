@@ -15,9 +15,10 @@ A lightweight Linux utility with a Qt GUI that emulates continuous mouse movemen
 
 ## Features
 
-- **Yawspeed Profiles**: Configure up to 5 speed slots with sliders and hotkeys to switch speeds on the fly.
-- **Speed Cycling**: Set a single keybind to cycle sequentially through your yawspeed profiles.
-- **Master Toggle**: Keybind to pause and unpause turnbinds globally.
+- **Dual Keybinds (Primary & Secondary)**: Bind up to two keys or mouse buttons for Turn Left, Turn Right, and Speed Cycling. Pressing either key triggers the action.
+- **Master Toggle Key Combination**: Bind a two-key chord (e.g. Left Ctrl + B) that must be pressed simultaneously to pause/unpause turnbinds globally.
+- **Yawspeed Profiles**: Configure up to 5 speed slots with sliders and individual hotkeys to switch speeds on the fly.
+- **Speed Cycling**: Cycle sequentially through your yawspeed profiles with your configured primary or secondary hotkey.
 - **Conflict Protection**: Alerts you if a key is assigned twice and unbinds the old action automatically.
 - **Persistent Config**: Settings are automatically saved to `~/.config/surfturnbinds/config.ini`.
 

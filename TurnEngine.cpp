@@ -56,8 +56,14 @@ void TurnEngine::shutdown() {
 void TurnEngine::setActive(bool active) {
     active_ = active;
     if (!active) {
+        left1Pressed_ = false;
+        left2Pressed_ = false;
+        right1Pressed_ = false;
+        right2Pressed_ = false;
         leftPressed_ = false;
         rightPressed_ = false;
+        toggleKey1Down_ = false;
+        toggleKey2Down_ = false;
         emit turningStateChanged(0);
     }
     emit engineStateChanged(active, active ? "Engine Active" : "Engine Paused");
@@ -66,8 +72,14 @@ void TurnEngine::setActive(bool active) {
 void TurnEngine::setWindowFocused(bool focused) {
     windowFocused_ = focused;
     if (focused) {
+        left1Pressed_ = false;
+        left2Pressed_ = false;
+        right1Pressed_ = false;
+        right2Pressed_ = false;
         leftPressed_ = false;
         rightPressed_ = false;
+        toggleKey1Down_ = false;
+        toggleKey2Down_ = false;
         emit turningStateChanged(0);
     }
 }
@@ -76,8 +88,12 @@ void TurnEngine::toggleActive() {
     setActive(!active_.load());
 }
 
-void TurnEngine::setToggleActiveKey(int keycode) {
-    toggleActiveKey_ = keycode;
+void TurnEngine::setToggleActiveKey1(int keycode) {
+    toggleActiveKey1_ = keycode;
+}
+
+void TurnEngine::setToggleActiveKey2(int keycode) {
+    toggleActiveKey2_ = keycode;
 }
 
 void TurnEngine::setTickRate(int hz) {
@@ -96,16 +112,36 @@ void TurnEngine::setDpi(int dpi) {
     }
 }
 
-void TurnEngine::setLeftKey(int keycode) {
-    leftKey_ = keycode;
+void TurnEngine::setLeftKey1(int keycode) {
+    leftKey1_ = keycode;
+    left1Pressed_ = false;
+    leftPressed_ = left1Pressed_.load() || left2Pressed_.load();
 }
 
-void TurnEngine::setRightKey(int keycode) {
-    rightKey_ = keycode;
+void TurnEngine::setLeftKey2(int keycode) {
+    leftKey2_ = keycode;
+    left2Pressed_ = false;
+    leftPressed_ = left1Pressed_.load() || left2Pressed_.load();
 }
 
-void TurnEngine::setCycleKey(int keycode) {
-    cycleKey_ = keycode;
+void TurnEngine::setRightKey1(int keycode) {
+    rightKey1_ = keycode;
+    right1Pressed_ = false;
+    rightPressed_ = right1Pressed_.load() || right2Pressed_.load();
+}
+
+void TurnEngine::setRightKey2(int keycode) {
+    rightKey2_ = keycode;
+    right2Pressed_ = false;
+    rightPressed_ = right1Pressed_.load() || right2Pressed_.load();
+}
+
+void TurnEngine::setCycleKey1(int keycode) {
+    cycleKey1_ = keycode;
+}
+
+void TurnEngine::setCycleKey2(int keycode) {
+    cycleKey2_ = keycode;
 }
 
 std::vector<YawProfile> TurnEngine::getProfiles() const {
@@ -293,27 +329,79 @@ void TurnEngine::inputListenerLoop() {
                         continue;
                     }
 
-                    // 2. Master Toggle Key (works whether active is true or false)
-                    if (toggleActiveKey_.load() != 0 && ev.value == 1 && ev.code == toggleActiveKey_.load()) {
+                    // 2. Master Toggle Key Combo (works whether active is true or false)
+                    int tk1 = toggleActiveKey1_.load();
+                    int tk2 = toggleActiveKey2_.load();
+
+                    if (tk1 != 0 && ev.code == tk1) {
+                        toggleKey1Down_ = (ev.value != 0);
+                    }
+                    if (tk2 != 0 && ev.code == tk2) {
+                        toggleKey2Down_ = (ev.value != 0);
+                    }
+
+                    bool toggleTriggered = false;
+                    if (tk1 != 0 && tk2 != 0) {
+                        // Both keys must be pressed at the same time (e.g. Ctrl + B)
+                        if (ev.value == 1) {
+                            if ((ev.code == tk1 && toggleKey2Down_.load()) ||
+                                (ev.code == tk2 && toggleKey1Down_.load())) {
+                                toggleTriggered = true;
+                            }
+                        }
+                    } else if (tk1 != 0 && tk2 == 0) {
+                        if (ev.value == 1 && ev.code == tk1) {
+                            toggleTriggered = true;
+                        }
+                    } else if (tk1 == 0 && tk2 != 0) {
+                        if (ev.value == 1 && ev.code == tk2) {
+                            toggleTriggered = true;
+                        }
+                    }
+
+                    if (toggleTriggered) {
                         toggleActive();
                         continue;
                     }
 
                     // 3. Normal Gaming Hotkeys (disabled while window is active)
                     if (active_ && !windowFocused_.load()) {
-                        // Turning Keys (only active if assigned != 0)
-                        if (leftKey_.load() != 0 && ev.code == leftKey_.load()) {
-                            leftPressed_ = (ev.value != 0);
+                        int lk1 = leftKey1_.load();
+                        int lk2 = leftKey2_.load();
+                        int rk1 = rightKey1_.load();
+                        int rk2 = rightKey2_.load();
+
+                        bool leftChanged = false;
+                        bool rightChanged = false;
+
+                        if (lk1 != 0 && ev.code == lk1) {
+                            left1Pressed_ = (ev.value != 0);
+                            leftChanged = true;
+                        }
+                        if (lk2 != 0 && ev.code == lk2) {
+                            left2Pressed_ = (ev.value != 0);
+                            leftChanged = true;
+                        }
+                        if (rk1 != 0 && ev.code == rk1) {
+                            right1Pressed_ = (ev.value != 0);
+                            rightChanged = true;
+                        }
+                        if (rk2 != 0 && ev.code == rk2) {
+                            right2Pressed_ = (ev.value != 0);
+                            rightChanged = true;
+                        }
+
+                        if (leftChanged || rightChanged) {
+                            leftPressed_ = left1Pressed_.load() || left2Pressed_.load();
+                            rightPressed_ = right1Pressed_.load() || right2Pressed_.load();
                             int dir = leftPressed_ ? -1 : (rightPressed_ ? 1 : 0);
-                            emit turningStateChanged(dir);
-                        } else if (rightKey_.load() != 0 && ev.code == rightKey_.load()) {
-                            rightPressed_ = (ev.value != 0);
-                            int dir = rightPressed_ ? 1 : (leftPressed_ ? -1 : 0);
                             emit turningStateChanged(dir);
                         }
 
                         // Cycle Key
-                        if (ev.value == 1 && cycleKey_.load() != 0 && ev.code == cycleKey_.load()) {
+                        int ck1 = cycleKey1_.load();
+                        int ck2 = cycleKey2_.load();
+                        if (ev.value == 1 && ((ck1 != 0 && ev.code == ck1) || (ck2 != 0 && ev.code == ck2))) {
                             cycleNextProfile();
                         }
 

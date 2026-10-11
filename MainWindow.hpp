@@ -38,14 +38,26 @@ protected:
 
 private slots:
     void onToggleActive();
-    void onSelectLeftKeyClicked();
-    void onClearLeftKeyClicked();
-    void onSelectRightKeyClicked();
-    void onClearRightKeyClicked();
-    void onSelectCycleKeyClicked();
-    void onClearCycleKeyClicked();
-    void onSelectMasterToggleKeyClicked();
-    void onClearMasterToggleKeyClicked();
+
+    void onSelectLeftKey1Clicked();
+    void onClearLeftKey1Clicked();
+    void onSelectLeftKey2Clicked();
+    void onClearLeftKey2Clicked();
+
+    void onSelectRightKey1Clicked();
+    void onClearRightKey1Clicked();
+    void onSelectRightKey2Clicked();
+    void onClearRightKey2Clicked();
+
+    void onSelectCycleKey1Clicked();
+    void onClearCycleKey1Clicked();
+    void onSelectCycleKey2Clicked();
+    void onClearCycleKey2Clicked();
+
+    void onSelectMasterToggleKey1Clicked();
+    void onClearMasterToggleKey1Clicked();
+    void onSelectMasterToggleKey2Clicked();
+    void onClearMasterToggleKey2Clicked();
 
     void onAddProfileClicked();
     void onRemoveProfileClicked(int id);
@@ -65,6 +77,7 @@ private:
     void setupUi();
     void rebuildProfileList();
     void updateActiveRowHighlight(int activeId);
+    void resetAllCaptureButtonTexts();
 
     void loadConfig();
     void saveConfig();
@@ -75,17 +88,25 @@ private:
     QPushButton* btnToggleActive_{nullptr};
     QLabel* lblStatus_{nullptr};
 
-    QPushButton* btnLeftKey_{nullptr};
-    QPushButton* btnClearLeftKey_{nullptr};
+    QPushButton* btnLeftKey1_{nullptr};
+    QPushButton* btnClearLeftKey1_{nullptr};
+    QPushButton* btnLeftKey2_{nullptr};
+    QPushButton* btnClearLeftKey2_{nullptr};
 
-    QPushButton* btnRightKey_{nullptr};
-    QPushButton* btnClearRightKey_{nullptr};
+    QPushButton* btnRightKey1_{nullptr};
+    QPushButton* btnClearRightKey1_{nullptr};
+    QPushButton* btnRightKey2_{nullptr};
+    QPushButton* btnClearRightKey2_{nullptr};
 
-    QPushButton* btnCycleKey_{nullptr};
-    QPushButton* btnClearCycleKey_{nullptr};
+    QPushButton* btnCycleKey1_{nullptr};
+    QPushButton* btnClearCycleKey1_{nullptr};
+    QPushButton* btnCycleKey2_{nullptr};
+    QPushButton* btnClearCycleKey2_{nullptr};
 
-    QPushButton* btnMasterToggleKey_{nullptr};
-    QPushButton* btnClearMasterToggleKey_{nullptr};
+    QPushButton* btnMasterToggleKey1_{nullptr};
+    QPushButton* btnClearMasterToggleKey1_{nullptr};
+    QPushButton* btnMasterToggleKey2_{nullptr};
+    QPushButton* btnClearMasterToggleKey2_{nullptr};
 
     QDoubleSpinBox* spinSensitivity_{nullptr};
 
