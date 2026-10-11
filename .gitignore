@@ -1,0 +1,70 @@
+# Compiled binaries
+surfturnbinds
+*.out
+*.exe
+
+# Object files and libraries
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.d
+
+# Qt generated files
+moc_*.cpp
+moc_*.h
+ui_*.h
+qrc_*.cpp
+*.moc
+*.qmlc
+*.jsc
+
+# Build directories
+build/
+bin/
+dist/
+out/
+
+# CMake artifacts
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile.cmake
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+CMakeUserPresets.json
+
+# Qt Creator & IDEs
+*.pro.user*
+CMakeLists.txt.user*
+.vscode/
+.idea/
+.clangd/
+.cache/
+*.swp
+*.swo
+*~
+.*.swp
+.*.swo
+
+# Nix outputs
+result
+result-*
+.direnv/
+
+# Local configs and logs
+*.log
+core
+core.*
+*.ini
+*.bak
+*.tmp
+*.orig
+
+# OS files
+.DS_Store
+Thumbs.db
